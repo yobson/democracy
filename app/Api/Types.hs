@@ -27,3 +27,6 @@ instance FromForm SignInData where
   fromForm f = SignInData
     <$> parseUnique "email" f
     <*> parseUnique "password" f
+
+
+newtype User = User { usrEmail :: Text }

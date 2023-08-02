@@ -20,15 +20,29 @@ import qualified Pages.Register as R
 import qualified Pages.SignIn   as S
 
 democracyServer :: ServerT API App
-democracyServer = publicApi :<|> static
+democracyServer =  privateApi 
+              :<|> registerApi
+              :<|> verifyApi
+              :<|> signInApi
+              :<|> static
 
-publicApi :: ServerT PublicAPI App
-publicApi = welcomePage :<|> registerPage
-                        :<|> registerPost
-                        :<|> verifyGet 
-                        :<|> signInPage
-                        :<|> signInPost
 
+privateApi :: ServerT PrivateAPI App
+privateApi _ =  welcomePage
+           :<|> createApi
+           :<|> electionsApi
+           :<|> signOut
+
+registerApi :: ServerT RegAPI App
+registerApi =  registerPage
+          :<|> registerPost
+
+verifyApi :: ServerT VerifyAPI App
+verifyApi = verifyGet
+
+signInApi :: ServerT SignInAPI App
+signInApi =  signInPage
+        :<|> signInPost
 
 welcomePage :: App W.WelcomeP
 welcomePage = do
@@ -83,6 +97,13 @@ signInPost SignInData{..} = do
          else if state == Locked
          then return $ Left $ S.pageData { S.errMsg = "!You need to activate your account" }
          else return $ Right $ W.pageData { W.errMsg = "Signed in!" }
+
+
+createApi = undefined
+
+electionsApi = undefined
+
+signOut = undefined
 
 static :: ServerT StaticAPI App
 static = serveDirectoryWebApp "static"
