@@ -1,0 +1,51 @@
+cabal-version:   3.0
+name:            democracy
+version:         0.1.0.0
+license:         AGPL-3.0-or-later
+author:          j.w.hobson@icloud.com
+maintainer:      James Hobson
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+executable democracy
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:    Api
+                      Api.Types
+                      Rest
+                      Stack
+                      Stack.Logger
+                      Stack.Database
+                      Stack.Password
+                      Stack.Email
+                      Pages.Common
+                      Pages.Welcome
+                      Pages.Register
+                      Pages.Vote
+                      Pages.SignIn
+                      Pages.Create
+                      Pages.Results
+    build-depends:    base ^>=4.16.4.0,
+                      servant,
+                      servant-server,
+                      text,
+                      freer-effects,
+                      selda,
+                      selda-sqlite,
+                      aeson,
+                      warp,
+                      lucid,
+                      servant-lucid,
+                      servant-rawm,
+                      servant-rawm-server,
+                      http-api-data,
+                      password,
+                      mime-mail,
+                      HaskellNet,
+                      base64,
+                      random
+    hs-source-dirs:   app
+    default-language: Haskell2010

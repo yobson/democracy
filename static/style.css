@@ -1,0 +1,86 @@
+* {
+  font-family: system-ui;
+  background-color: hsla(141, 0%, 70%, 1);
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #333;
+}
+
+li a:hover {
+  background-color: #111;
+}
+
+.container {
+    margin: 1rem auto;
+    max-width: 90rem;
+    width: 100%;
+    padding-left: 2rem;
+    padding-right:2rem
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    margin-top: 1.6rem;
+    margin-bottom:3.2rem
+}
+.alert {
+  padding: 20px;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.alert.bad {
+  background-color: #f44336; /* Red */
+}
+
+.alert.good {
+  background-color: #6bfc03;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn.bad {
+  background-color: #f44336; /* Red */
+}
+
+.closebtn.good {
+  background-color: #6bfc03;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+
+input.text-input {
+  background-color: #ffffff;
+}
