@@ -14,7 +14,7 @@ I will, when finished, provide and support:
 For those running on an unsupported system, I will provide:
 - [ ] AppImage
 
-But really you should build it from source because I'm *not going to fix appimage issues*.
+But really you should build it from source because I'm **not going to fix appimage issues**.
 
 ### Building From source
 You need to have `sqlite` or `prostgres`, `cabal` and `ghc` installed. This is currently only tested with `ghc-9.2.8`.
