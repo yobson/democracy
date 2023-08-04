@@ -13,7 +13,8 @@ I will, when finished, provide and support:
 
 For those running on an unsupported system, I will provide:
 - [ ] AppImage
-But really you should build it from source because I'm not going to fix appimage issues.
+
+But really you should build it from source because I'm *not going to fix appimage issues*.
 
 ### Building From source
 You need to have `sqlite` or `prostgres`, `cabal` and `ghc` installed. This is currently only tested with `ghc-9.2.8`.
@@ -22,6 +23,7 @@ The easiest way to get cabal and ghc is with [ghcup](https://www.haskell.org/ghc
 Then all you have to do is open a terminal and naviagte to the source code and type:
 ```shell
 cabal -O2 build
+cabal -O2 install
 ```
 
 ## Running
@@ -31,8 +33,10 @@ If you have installed it, then simply start the service!
 ### Running from source
 If you are running from source, simple run:
 ```
-cabal -O2 run
+./democracy
 ```
+You probably want to setup some kind of service to do this for you,
+but I'll leave that to you.
 
 ## Configuring
 Not implemented yet!
