@@ -7,7 +7,6 @@
 - [X] Login system
 - [ ] TOML Config
 - [ ] Postgres backend
-- [ ] Proper authentification with servant
+- [X] Proper authentification with servant
 - [ ] First past the post
 - [ ] Single Transferable
-- [ ] 

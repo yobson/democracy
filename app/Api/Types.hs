@@ -1,9 +1,12 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}
 
 module Api.Types where
 
 import Data.Text
+import GHC.Generics
 import Web.FormUrlEncoded
+import Servant.Auth.JWT
+import Data.Aeson
 
 data RegData = RegData
   { email :: !Text
@@ -30,3 +33,9 @@ instance FromForm SignInData where
 
 
 newtype User = User { usrEmail :: Text }
+  deriving Generic
+
+instance ToJSON User
+instance FromJSON User
+instance ToJWT User
+instance FromJWT User

@@ -5,6 +5,7 @@ module Pages.Common where
 import Lucid
 import Data.Text (Text, pack)
 import Data.String
+import Api.Types
 
 
 top_ :: (Monad m) => HtmlT m ()
@@ -38,8 +39,8 @@ democracy_ b = do
     b
   bottom_
 
-democracyLI_ :: (Monad m) => HtmlT m () -> HtmlT m ()
-democracyLI_ b = do
+democracyLI_ :: (Monad m) => User -> HtmlT m () -> HtmlT m ()
+democracyLI_ _ b = do
   top_
   body_ $ do
     navBarLI_

@@ -5,6 +5,7 @@ module Pages.Welcome where
 import Lucid
 import Data.Text (Text)
 import Pages.Common
+import Api.Types
 
 import qualified Data.Text as T
 
@@ -12,16 +13,23 @@ data WelcomeP = WelcomeP
   { title   :: Text
   , message :: [Text]
   , errMsg  :: Banner
+  , user    :: Maybe User
   }
 
 
 instance ToHtml WelcomeP where
   toHtmlRaw = toHtml
-  toHtml WelcomeP{..} = democracy_ $ div_ [class_ "content"] $
-      section_ [class_ "container page"] $ do
-        h1_ (toHtml title)
-        showError_ errMsg
-        mapM_ (p_ . toHtml) message
+  toHtml WelcomeP{..} = case user of
+      Nothing -> democracy_ $ div_ [class_ "content"] $
+                  section_ [class_ "container page"] $ do
+                    h1_ (toHtml title)
+                    showError_ errMsg
+                    mapM_ (p_ . toHtml) message
+      Just usr -> democracyLI_ usr $ div_ [class_ "content"] $
+                    section_ [class_ "container page"] $ do
+                      h1_ (toHtml title)
+                      showError_ errMsg
+                      mapM_ (p_ . toHtml) message
 
 
 pageData :: WelcomeP
@@ -44,4 +52,5 @@ pageData = WelcomeP
                 ]
     ]
   , errMsg = None
+  , user   = Nothing
   }

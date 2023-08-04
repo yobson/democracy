@@ -1,10 +1,11 @@
-{-# LANGUAGE DataKinds, RecordWildCards #-}
-{-# LANGUAGE KindSignatures, FlexibleInstances #-}
+{-# LANGUAGE DataKinds, RecordWildCards, FlexibleContexts #-}
+{-# LANGUAGE KindSignatures, FlexibleInstances, MonoLocalBinds #-}
 {-# LANGUAGE OverloadedStrings, ViewPatterns #-}
 
 module Rest where
 
-import Servant hiding (serveDirectoryWebApp)
+import Servant hiding (serveDirectoryWebApp, Server, throwError)
+import Servant.Auth.Server
 import Servant.RawM.Server
 
 
@@ -13,6 +14,8 @@ import Api.Types
 import Stack
 import Data.Text (Text)
 import Data.Char
+
+import Control.Monad.Freer
 
 import qualified Data.Text      as T
 import qualified Pages.Welcome  as W
@@ -28,7 +31,7 @@ democracyServer =  privateApi
 
 
 privateApi :: ServerT PrivateAPI App
-privateApi _ =  welcomePage
+privateApi u =  welcomePage u
            :<|> createApi
            :<|> electionsApi
            :<|> signOut
@@ -44,8 +47,12 @@ signInApi :: ServerT SignInAPI App
 signInApi =  signInPage
         :<|> signInPost
 
-welcomePage :: App W.WelcomeP
-welcomePage = do
+welcomePage :: AuthResult User -> App W.WelcomeP
+welcomePage (Authenticated usr) = do
+  logMessage "Welcome Page"
+  return W.pageData{ W.user = Just usr }
+
+welcomePage _ = do
   logMessage "Welcome Page"
   return W.pageData
 
@@ -72,32 +79,38 @@ registerPost RegData{..}
                         <> "&token=" <> token)
            sendMail mail
            return R.pageData {R.errorMsg = "An email has been sent. Click on the link to verify"}
-         Nothing -> return R.pageData {R.errorMsg = "!Error! Maybe email already registered"}
+         Nothing -> throwPage 400 R.pageData {R.errorMsg = "!Error! Maybe email already registered"}
 
-verifyGet :: Text -> Text -> App (Either W.WelcomeP S.SignInP)
+verifyGet :: Text -> Text -> App S.SignInP
 verifyGet (lower -> email) token = do
   activated <- activateUser email token
   if activated
-     then return $ Right $ S.pageData { S.errMsg = "Account activated! You can now log in!" }
-     else return $ Left  $ W.pageData { W.errMsg = "!Failed to activate account!" }
+     then return $ S.pageData { S.errMsg = "Account activated! You can now log in!" }
+     else throwPage 400 W.pageData { W.errMsg = "!Failed to activate account!" }
 
 
 signInPage :: App S.SignInP
 signInPage = return S.pageData
 
-signInPost :: SignInData -> App (Either S.SignInP W.WelcomeP)
+signInPost :: SignInData -> App (LogInCookies W.WelcomeP)
 signInPost SignInData{..} = do
   ps <- getLoginData (lower siEmail)
   case ps of
-    Nothing -> return $ Left $ S.pageData { S.errMsg = "!Incorrect Email or Password" }
+    Nothing -> throwPage 401 S.pageData{ S.errMsg = "!Incorrect Email or Password" }
     Just (pass,state) -> do
       ck <- checkPassword siPass pass
       if not ck
-         then return $ Left $ S.pageData { S.errMsg = "!Incorrect Email or Password" }
+         then throwPage 401 S.pageData{ S.errMsg = "!Incorrect Email or Password" }
          else if state == Locked
-         then return $ Left $ S.pageData { S.errMsg = "!You need to activate your account" }
-         else return $ Right $ W.pageData { W.errMsg = "Signed in!" }
-
+         then throwPage 401 S.pageData { S.errMsg = "!You need to activate your account" }
+         else do
+           cookieCfg <- asks glCookieCfg
+           jwtCfg    <- asks glJwtCfg
+           let user  = User{usrEmail = lower siEmail}
+           applyHeaders <- genHeaders cookieCfg jwtCfg user
+           case applyHeaders of
+             Nothing -> throwError err401
+             Just fs -> return $ fs W.pageData{ W.errMsg = "Signed in!", W.user = Just user }
 
 createApi = undefined
 
