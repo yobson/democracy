@@ -24,12 +24,14 @@ navBar_ = ul_ $ do
   li_ $ a_ [href_ "/register"] "Register"
   li_ $ a_ [href_ "/signin"]   "Sign In"
 
-navBarLI_ :: (Monad m) => HtmlT m ()
-navBarLI_ = ul_ $ do
-  li_ $ a_ [href_ "/"]             "Home"
-  li_ $ a_ [href_ "/create"]       "New Election"
-  li_ $ a_ [href_ "/my-elections"] "My Elections"
-  li_ $ a_ [href_ "/signout"]      "Sign Out"
+navBarLI_ :: (Monad m) => User -> HtmlT m ()
+navBarLI_ usr = div_ [class_ "topnav"] $ do
+    a_ [href_ "/"]             "Home"
+    a_ [href_ "/create"]       "New Election"
+    a_ [href_ "/my-elections"] "My Elections"
+    div_ [class_ "topnav-right"] $ do
+      a_ [href_ "/me"] (toHtml $ usrEmail usr)
+      a_ [href_ "/signout"] "Sign Out"
 
 democracy_ :: (Monad m) => HtmlT m () -> HtmlT m ()
 democracy_ b = do
@@ -40,10 +42,10 @@ democracy_ b = do
   bottom_
 
 democracyLI_ :: (Monad m) => User -> HtmlT m () -> HtmlT m ()
-democracyLI_ _ b = do
+democracyLI_ usr b = do
   top_
   body_ $ do
-    navBarLI_
+    navBarLI_ usr
     b
   bottom_
 

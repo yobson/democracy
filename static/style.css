@@ -28,6 +28,32 @@ li a:hover {
   background-color: #111;
 }
 
+/* Add a black background color to the top navigation */
+.topnav {
+    background-color: #333;
+    overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #333;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #111;
+}
+
+/* Right-aligned section inside the top navigation */
+.topnav-right {
+  float: right;
+}
+
 .container {
     margin: 1rem auto;
     max-width: 90rem;

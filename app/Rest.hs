@@ -8,6 +8,7 @@ import Servant hiding (serveDirectoryWebApp, Server, throwError)
 import Servant.Auth.Server
 import Servant.RawM.Server
 
+import Control.Monad.Freer
 
 import Api
 import Api.Types
@@ -15,12 +16,11 @@ import Stack
 import Data.Text (Text)
 import Data.Char
 
-import Control.Monad.Freer
-
 import qualified Data.Text      as T
 import qualified Pages.Welcome  as W
 import qualified Pages.Register as R
 import qualified Pages.SignIn   as S
+import qualified Pages.Create   as C
 
 democracyServer :: ServerT API App
 democracyServer =  privateApi 
@@ -29,12 +29,18 @@ democracyServer =  privateApi
               :<|> signInApi
               :<|> static
 
+throwUnAuth :: (Member AppErr r) => Eff r a
+throwUnAuth = throwPage 401 S.pageData{S.errMsg = "!You need to sign in to view this page!"}
 
 privateApi :: ServerT PrivateAPI App
-privateApi u =  welcomePage u
-           :<|> createApi
-           :<|> electionsApi
-           :<|> signOut
+privateApi (Authenticated u) =  welcomePageAuth u
+                           :<|> createApi u
+                           :<|> electionsApi
+                           :<|> signOut
+privateApi _                 = welcomePage
+                           :<|> throwUnAuth
+                           :<|> throwUnAuth
+                           :<|> throwUnAuth
 
 registerApi :: ServerT RegAPI App
 registerApi =  registerPage
@@ -47,12 +53,13 @@ signInApi :: ServerT SignInAPI App
 signInApi =  signInPage
         :<|> signInPost
 
-welcomePage :: AuthResult User -> App W.WelcomeP
-welcomePage (Authenticated usr) = do
+welcomePageAuth :: User -> App W.WelcomeP
+welcomePageAuth usr = do
   logMessage "Welcome Page"
   return W.pageData{ W.user = Just usr }
 
-welcomePage _ = do
+welcomePage :: App W.WelcomeP
+welcomePage = do
   logMessage "Welcome Page"
   return W.pageData
 
@@ -112,7 +119,8 @@ signInPost SignInData{..} = do
              Nothing -> throwError err401
              Just fs -> return $ fs W.pageData{ W.errMsg = "Signed in!", W.user = Just user }
 
-createApi = undefined
+createApi :: User -> App C.CreateP
+createApi u = return C.pageData{C.user=u}
 
 electionsApi = undefined
 

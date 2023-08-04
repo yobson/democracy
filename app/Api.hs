@@ -18,6 +18,7 @@ import Api.Types
 import qualified Pages.Welcome  as W
 import qualified Pages.Register as R
 import qualified Pages.SignIn   as S
+import qualified Pages.Create   as C
 
 
 type API =  PrivateAPI
@@ -38,7 +39,7 @@ type SignInAPI =  Get '[HTML] S.SignInP
 type PrivateAPI = Auth '[Cookie] User :> MainApi
 
 type MainApi =  Get '[HTML] W.WelcomeP
-           :<|> "create"       :> Get '[HTML] W.WelcomeP
+           :<|> "create"       :> Get '[HTML] C.CreateP
            :<|> "my-elections" :> Get '[HTML] W.WelcomeP
            :<|> "signout"      :> Get '[HTML] W.WelcomeP
        
