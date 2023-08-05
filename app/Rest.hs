@@ -93,11 +93,15 @@ verifyGet (lower -> email) token = do
   activated <- activateUser email token
   if activated
      then return $ S.pageData { S.errMsg = "Account activated! You can now log in!" }
-     else throwPage 400 W.pageData { W.errMsg = "!Failed to activate account!" }
+     else do
+       logMessage $ "Security Incident: Invalid email activation " <> T.unpack email
+       throwPage 400 W.pageData { W.errMsg = "!Failed to activate account!" }
 
 
 signInPage :: App S.SignInP
-signInPage = return S.pageData
+signInPage = do
+  logMessage "Login Page"
+  return S.pageData
 
 signInPost :: SignInData -> App (LogInCookies W.WelcomeP)
 signInPost SignInData{..} = do
@@ -107,7 +111,9 @@ signInPost SignInData{..} = do
     Just (pass,state) -> do
       ck <- checkPassword siPass pass
       if not ck
-         then throwPage 401 S.pageData{ S.errMsg = "!Incorrect Email or Password" }
+         then do
+           logMessage $ "Security Incident: Wrong Password for " <> T.unpack (lower siEmail)
+           throwPage 401 S.pageData{ S.errMsg = "!Incorrect Email or Password" }
          else if state == Locked
          then throwPage 401 S.pageData { S.errMsg = "!You need to activate your account" }
          else do

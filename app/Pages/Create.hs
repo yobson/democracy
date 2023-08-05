@@ -25,6 +25,7 @@ instance ToHtml CreateP where
         elecType_
         singleSys_
         multiSys_
+        fptpSing_
 
         div_ [id_ "buttons", class_ "buttons"] $ do
           button_ [type_ "button", id_ "previousBtn", hidden_ "true"] "Previous"
@@ -249,6 +250,15 @@ multiSys_ = div_ [id_ "multiSys", hidden_ "true"] $ do
     option_ [value_ "altVoteP"] "Alternative Vote Plus"
     option_ [value_ "supVote"]  "Suplimentary Vote"
     option_ [value_ "plpr"]     "Party List Propotional Representation"
+
+
+fptpSing_ :: Monad m => HtmlT m ()
+fptpSing_ = div_ [id_ "fptpSing", hidden_ "true"] $ do
+  h2_ "First Past The Post Settings"
+  h3_ "Candidates/Options:"
+  div_ [id_ "candidates"] ""
+  button_ [type_ "button", id_ "fptpSingRemBtn"] "Remove"
+  button_ [type_ "button", id_ "fptpSingAddBtn"] "Add"
 
 pageData :: User -> CreateP
 pageData u = CreateP
