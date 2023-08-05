@@ -57,7 +57,7 @@ li a:hover {
 .container {
     margin: 1rem auto;
     max-width: 90rem;
-    width: 100%;
+    width: 90%;
     padding-left: 2rem;
     padding-right:2rem
 }
@@ -109,4 +109,16 @@ li a:hover {
 
 input.text-input {
   background-color: #ffffff;
+}
+
+form {
+    line-height: 30px;
+}
+
+form div.buttons {
+    margin-top: 10px;
+}
+
+button.next {
+    float: right;
 }

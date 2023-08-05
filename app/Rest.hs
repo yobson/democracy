@@ -120,7 +120,7 @@ signInPost SignInData{..} = do
              Just fs -> return $ fs W.pageData{ W.errMsg = "Signed in!", W.user = Just user }
 
 createApi :: User -> App C.CreateP
-createApi u = return C.pageData{C.user=u}
+createApi u = return $ C.pageData u
 
 electionsApi = undefined
 
